@@ -6,17 +6,35 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 
 <script>
+
 var margin = 50
 var width = window.innerWidth -100
 var height = window.innerHeight - 100
 
 var svg = d3.select("svg")
-    .attr("width", width + margin + margin)
-    .attr("height", height + margin + margin)
+    .attr("width", width + margin *2)
+    .attr("height", height + margin *2)
 	.attr("backgroundColor", "blue")
   .append("g")
     .attr("transform", "translate(" + margin + "," + margin + ")");
 
+//data!
+var data = d3.csv("https://github.com/Todd-Z-Li/todd/blob/master/CS498_data_vis/nasa_co2_ppm_data_yearly.csv")
+console.log(data);
+
+var x = d3.scaleLinear()
+    .domain(d3.extent(data, d => d.Year))
+    .range([margin, width - margin])
+
+var y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.avg)]).nice()
+    .range([height - margin, margin])
+	
+var xAxis = g => g
+    .attr("transform", `translate(0,${height - margin})`)
+    .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))	
+	
+	
 </script>
 
 
