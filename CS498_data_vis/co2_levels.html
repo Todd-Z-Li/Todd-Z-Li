@@ -2,50 +2,80 @@
 <head><title> Page 1: Global CO2 Parts per Million </title> </header>
 
 
-<!-- Load in the d3 library -->
+<!-- Load in the d3 library -->
 <script src="https://d3js.org/d3.v5.min.js"></script>
-
-<script>
-
-var margin = 50
-var width = window.innerWidth -100
-var height = window.innerHeight - 100
-
-var svg = d3.select("svg")
-    .attr("width", width + margin *2)
-    .attr("height", height + margin *2)
-	.attr("backgroundColor", "blue")
-  .append("g")
-    .attr("transform", "translate(" + margin + "," + margin + ")");
-
-//data!
-var data = d3.csv("https://github.com/Todd-Z-Li/todd/blob/master/CS498_data_vis/nasa_co2_ppm_data_yearly.csv")
-console.log(data);
-
-var x = d3.scaleLinear()
-    .domain(d3.extent(data, d => d.Year))
-    .range([margin, width - margin])
-
-var y = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.avg)]).nice()
-    .range([height - margin, margin])
-	
-var xAxis = g => g
-    .attr("transform", `translate(0,${height - margin})`)
-    .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))	
-	
-	
-</script>
-
 
 
 <body>
 <center> <h1> Global CO2 Levels Have Reached Unprecedented Heights</h1>
 
-<svg>
+<svg style ='border:solid;'>
 </svg>
 </center>
 
+<script>
+
+var margin = 50;
+var width = window.innerHeight;
+var height = window.innerHeight *0.628 //golden ratio!;
+
+
+var svg = d3.select('svg')
+svg.attr("width", width + margin )
+    .attr("height", height + margin);
+
+
+//data!
+var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_data_yearly.csv").then(function(data) {
+	data.forEach(function(d) {
+        d.year = +d.Year;
+        d.avg = +d.avg;
+		d.min = +d.min;
+		d.max = +d.max;
+		});
+	console.log(data);
+	});
+
+
+var x = d3.scaleLinear()
+    .domain(d3.extent(data, function(d) { return d.year; }))
+	.domain([1958,2018])
+    .range([margin, width - margin])
+
+svg.append("g")
+	.attr("class", "x axis")
+	.attr("transform", "translate(" +0+", "+(height) + ")")
+	.call(d3.axisBottom(x).tickFormat(d3.format("d")));
+	
+
+
+var y = d3.scaleLinear()
+    .domain([300, 450]).nice()
+    .range([height - margin, margin])
+
+svg.append("g")
+	.attr("class", "y axis")
+	.attr("transform", "translate(" + margin+", "+margin + ")")
+	.call(d3.axisLeft(y));
+	
+
+var line = d3.line()
+    .x(function(d) { return x(d.year); }) // set the x values for the line generator
+    .y(function(d) { return y(d.avg); }) // set the y values for the line generator 
+    //.curve(d3.curveMonotoneX) // apply smoothing to the line
+	
+svg.append("path")
+    .datum(data) // 10. Binds data to the line 
+    .attr("class", "line") // Assign a class for styling 
+    .attr("d", line)
+	.attr("transform", "translate(" +margin+", "+(height) + ")"); // 11. Calls the line generator 
+
+
+	
+</script>
+
+
 
 </body>
+
 
