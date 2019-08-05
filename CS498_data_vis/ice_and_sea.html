@@ -45,21 +45,23 @@ svg.append("g")
 
 var line = d3.line()
     .x(function(d,i) { return x(d.year); })
-    .y(function(d,i) { return y(d.avg); }) // y is avg
-	
-var line_smoothed = d3.line()
-    .x(function(d,i) { return x(d.year); })
-    .y(function(d,i) { return y(d.smoothed); }) // y is min
+    .y(function(d,i) { return temp_scale(d.temp); }) // y is avg
+
+var temp_scale = d3.scaleLinear()
+    .domain([0.2,1.1]).nice()
+    .range([height , margin])
+
+var size_scale = d3.scaleLinear()
+    .domain([3000000,8000000]).nice()
+    .range([2 , 20])
 
 var colors = d3.scaleQuantize()
-    .domain([-0.5,1.1])
-    .range(["#E0EEEE", "#00EEEE", "#00C5CD", "#ABDDA4",
-    "#1E90FF", "#4876FF", "#0276FD", "#35586C","#302B54"]);	
+    .domain([2000000,10000000])
+    .range(["#00FFFF", "#00CCFF","#0099CC","#0066CC", "#0033CC","#0000CC"]);	
 	
-		
 	
 var y = d3.scaleLinear()
-    .domain([-0.5,1.1]).nice()
+    .domain([-25,55]).nice()
     .range([height , margin])
 
 svg.append("g")
@@ -70,29 +72,30 @@ svg.append("g")
 var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_ice_sealevel_combo_data_yearly.csv").then(function(data) {
 	//data!
 	data.forEach(function(d) {
-        d.year = +d.year;
+        d.year = +d.Year;
         d.avg = +d.min_arctic_ice_ext;		
 		d.sealevel = +d.sealevel_deviation_from_1993;
 		d.temp = +d.temp_deviation_century_mean
+		d.ice_perc = +d.ice_percent
 		});
 
 	console.log(data);
 
 
 
-	svg.append("path")
-		.datum(data) 
-		.attr("class", "line") 
-		.attr("d", line(data))
-		.attr("style","fill:none; stroke: grey; stroke-width: 3;shape-rendering: crispEdges; color: gray")
-		.attr( 'stroke',function(d) { return colors(d.avg);})
+	// svg.append("path")
+		// .datum(data) 
+		// .attr("class", "line") 
+		// .attr("d", line(data))
+		// .attr("style","fill:none; stroke: grey; stroke-width: 3;shape-rendering: crispEdges; color: gray")
+		// .attr( 'stroke',function(d) { return colors(d.avg);})
 		
-	svg.append("path")
-		.datum(data) 
-		.attr("class", "line_min") 
-		.attr("d", line_smoothed(data))
-		.attr("style","fill:none; stroke: orange; stroke-width: 1;shape-rendering: crispEdges; color: blue")
-		.attr( 'fill',function(d) { return colors(d.avg);})
+	// svg.append("path")
+		// .datum(data) 
+		// .attr("class", "line_min") 
+		// .attr("d", line_smoothed(data))
+		// .attr("style","fill:none; stroke: orange; stroke-width: 1;shape-rendering: crispEdges; color: blue")
+		// .attr( 'fill',function(d) { return colors(d.avg);})
 
 
 	svg.selectAll(".dot")
@@ -100,23 +103,25 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_i
 	  .enter().append("circle") 
 		.attr("class", "dot")
 		.attr("cx", function(d, i) { return x(d.year) })
-		.attr("cy", function(d) { return y(d.avg) })
+		.attr("cy", function(d) { return y(d.sealevel) })
 		.attr("fill", function(d) { return colors(d.avg);})
-		.attr("r", 4)
+		.attr("r", function(d){return size_scale(d.avg);})
 		  .on("mouseover", function(a, b, c) {
-				console.log(x(a.year), y(a.avg) );
-				d3.select(this).attr("r", 6);
-				 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.avg) + 40; }).attr('id','hovertext').attr('font-weight','bold')
+				d3.select(this).attr("r", function(a){return size_scale(a.avg)});
+			 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.sealevel) + 40; }).attr('id','hovertext').attr('font-weight','bold')
 				.text(function() {
-				  return 'Year: '+ a.year + '; Temp Dev: '+a.avg;  
+				  return 'Year: '+ a.year + '; Sealevel Rise Since 2000: '+a.sealevel;  
 					});
-				console.log(this.id);
+			 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.sealevel) + 60; }).attr('id','hovertext2').attr('font-weight','bold')
+				.text(function() {
+				  return 'Arctic Ice (MM SQ KM): '+ a.avg + '; Ice Loss: '+(a.ice_perc*100)+'%';  
+					});
 			})
 			
 		  .on("mouseout", function(a, b, c) {
-				console.log(x(a.year));
-				d3.select(this).attr("r", 4).attr("fill", function(a) { return colors(a.avg);});
+				d3.select(this).attr('r',function(a){return size_scale(a.avg);}).attr("fill", function(a) { return colors(a.avg);});
 				d3.select('#hovertext').remove();
+				d3.select('#hovertext2').remove();
 				}
 			)
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
@@ -129,14 +134,14 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_i
 		  return 'Year: '+ 2018 + '; Temp Dev.: '+0.85;  
 			})
 			
-	svg.append("circle") 
-		.attr("class", "dot") 
-		.attr("cx", x(1976)).attr("cy", y(-0.1)).attr("r", 6).attr('fill', colors(-0.1))
+	// svg.append("circle") 
+		// .attr("class", "dot") 
+		// .attr("cx", x(1976)).attr("cy", y(-0.1)).attr("r", 6).attr('fill', colors(-0.1))
 		
-	svg.append("text").attr("x", x(1976)-20).attr("y", y(-0.1)+30).attr('id','perm_text')
-		.text(function() {
-		  return '1976 was the last time we dipped below the 1950 - 1980 avg.'  
-			})
+	// svg.append("text").attr("x", x(1976)-20).attr("y", y(-0.1)+30).attr('id','perm_text')
+		// .text(function() {
+		  // return '1976 was the last time we dipped below the 1950 - 1980 avg.'  
+			// })
 	
 		});
 
@@ -156,7 +161,7 @@ svg.append("text")
 	.attr("x", -height/2+margin)
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
-    .text("Degrees Deviation from 1950 - 1980 Average (Celsius)")
+    .text("Sea Levels Deviation Compared to Year 2000 Avg Measurements (Millimeters)")
 	
 var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+", "+ margin + ")")
 
@@ -164,15 +169,15 @@ var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+"
 note_box.append("text")
     .attr("dy", "20")
     .attr("opacity", "1")
-    .text("Global warming has been in the news for decades, but more recent data is sombering.");
+    .text("In recent years, our instruments have allowed us to measure sea levels and arctic sea ice more precisely...");
 note_box.append("text")
     .attr("dy", "40")
     .attr("opacity", "1")
-    .text("18 of the 19 hottest years were in the 2000s, and the one that was not was 1998.");
+    .text("...and see the extent of the drop in arctic ice coverage and rise in sea levels in just a couple of short decades.");
 note_box.append("text")
     .attr("dy", "60")
     .attr("opacity", "1")
-    .text("With temperatures higher than historical, the most sensitive areas, the polar ice caps, have increased their melting...");
+    .text("The sixty millimeter rise in sea levels in two decades is drastically impacting coastal areas in ways we can feel today.");
 
 note_box.append("text")
     .attr("dy", "80")
