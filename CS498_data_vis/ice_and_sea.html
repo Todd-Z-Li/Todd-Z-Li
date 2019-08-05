@@ -1,5 +1,5 @@
 <!-- page 1 of visualization project for CS 498 -->
-<head><title> Page 2: Global Temperature Increases </title> </header>
+<head><title> Page 3: More Sea, Less Ice </title> </header>
 
 
 <!-- Load in the d3 library -->
@@ -7,18 +7,17 @@
 
 
 <body>
-<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages 
-<br>(Deviation from 1950 - 1980 Avg, in Celsius)</h1>
+<center> <h1>Indicators Point to Hotter Planet, Higher Sea Levels, and Ice-free Arctic in the Future </h1>
 
 <svg style ='border:solid;'>
 </svg>
 <div padding = '10px'>
 <br>
-<a href='ice_and_sea.html'> <h2> Next: Click Here to See How Sea Ice and Sea Levels Have Been Affected By Rising Temperatures</h2></a>
+<a href='temperature.html'> <h2> Prev: Click Here to See How Temperature Drastically Shifted in Second Half of 20th Centure</h2></a>
 </div>
 <div padding = '10px'>
 <br>
-<a href='co2_levels.html'> <h2> Prev: Click Here to See How Atmospheric CO2 Has Increased, which Contributed to this Temperature Rise</h2></a>
+<a href='co2_levels.html'> <h2> Prev: Click Here to See How Atmospheric CO2 Has Increased, which Contributed to the Temperature Rise</h2></a>
 </div>
 </center>
 
@@ -35,7 +34,7 @@ svg.attr("width", width + margin )
 
 
 var x = d3.scaleLinear()
-	.domain([1900,2018])
+	.domain([1993,2019])
     .range([margin, width - margin])
 
 svg.append("g")
@@ -54,8 +53,8 @@ var line_smoothed = d3.line()
 
 var colors = d3.scaleQuantize()
     .domain([-0.5,1.1])
-    .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598", 
-    "lightgreen", "#FEE08B", "#FDAE61", "#F46D43", "#D53E4F", "#9E0142"]);	
+    .range(["#E0EEEE", "#00EEEE", "#00C5CD", "#ABDDA4",
+    "#1E90FF", "#4876FF", "#0276FD", "#35586C","#302B54"]);	
 	
 		
 	
@@ -68,12 +67,13 @@ svg.append("g")
 	.attr("transform", "translate(" + margin+", "+0 + ")")
 	.call(d3.axisLeft(y));
 
-var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_temp_deviation_data_yearly.csv").then(function(data) {
+var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_ice_sealevel_combo_data_yearly.csv").then(function(data) {
 	//data!
 	data.forEach(function(d) {
         d.year = +d.year;
-        d.avg = +d.no_smoothing;		
-		d.smoothed = +d.lowess_smoothed;
+        d.avg = +d.min_arctic_ice_ext;		
+		d.sealevel = +d.sealevel_deviation_from_1993;
+		d.temp = +d.temp_deviation_century_mean
 		});
 
 	console.log(data);
