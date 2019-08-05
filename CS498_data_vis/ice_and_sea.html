@@ -74,9 +74,9 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_i
 	data.forEach(function(d) {
         d.year = +d.Year;
         d.avg = +d.min_arctic_ice_ext;		
-		d.sealevel = +d.sealevel_deviation_from_1993;
-		d.temp = +d.temp_deviation_century_mean
-		d.ice_perc = +d.ice_percent
+		d.sealevel = +d.sealevel_deviation_from_2000;
+		d.temp = +d.temp_deviation_century_mean;
+		d.ice_perc = +d.ice_percent_lost;
 		});
 
 	console.log(data);
@@ -158,10 +158,10 @@ svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
     .attr("y", 30)
-	.attr("x", -height/2+margin)
+	.attr("x", -height/2+2*margin)
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
-    .text("Sea Levels Deviation Compared to Year 2000 Avg Measurements (Millimeters)")
+    .text("Sea Levels Deviation Compared to Year 2000 Measurements (Millimeters)")
 	
 var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+", "+ margin + ")")
 
@@ -182,7 +182,7 @@ note_box.append("text")
 note_box.append("text")
     .attr("dy", "80")
     .attr("opacity", "1")
-    .text("Hover to see year and temperature deviations from the 1950 - 80 averages");
+    .text("Hover to see the arctic ice extent losses");
 	
 
 </script>
