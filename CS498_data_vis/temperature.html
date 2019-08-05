@@ -34,7 +34,7 @@ svg.attr("width", width + margin )
 
 
 var x = d3.scaleLinear()
-	.domain([1980,2018])
+	.domain([1900,2018])
     .range([margin, width - margin])
 
 svg.append("g")
@@ -47,20 +47,19 @@ var line = d3.line()
     .x(function(d,i) { return x(d.year); })
     .y(function(d,i) { return y(d.avg); }) // y is avg
 	
-var line_min = d3.line()
+var line_smoothed = d3.line()
     .x(function(d,i) { return x(d.year); })
-    .y(function(d,i) { return y(d.min); }) // y is min
+    .y(function(d,i) { return y(d.smoothed); }) // y is min
 
-var line_max = d3.line()
-    .x(function(d,i) { return x(d.year); })
-    .y(function(d,i) { return y(d.max); }) // y is max
-	
-	
+var colors = d3.scaleQuantize()
+    .domain([-0.5,1.1])
+    .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598", 
+    "#FFFFBF", "#FEE08B", "#FDAE61", "#F46D43", "#D53E4F", "#9E0142"]);	
 	
 		
 	
 var y = d3.scaleLinear()
-    .domain([300,450]).nice()
+    .domain([-0.5,1.1]).nice()
     .range([height , margin])
 
 svg.append("g")
@@ -68,17 +67,16 @@ svg.append("g")
 	.attr("transform", "translate(" + margin+", "+0 + ")")
 	.call(d3.axisLeft(y));
 
-var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_data_yearly.csv").then(function(data) {
+var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_temp_deviation_data_yearly.csv").then(function(data) {
 	//data!
 	data.forEach(function(d) {
-        d.year = +d.Year;
-        d.avg = +d.avg;		
-		d.min = +d.min;
-		d.max = +d.max;
+        d.year = +d.year;
+        d.avg = +d.no_smoothing;		
+		d.smoothed = +d.lowess_smoothed;
 		});
 
 	console.log(data);
-		
+
 
 
 	svg.append("path")
@@ -90,14 +88,9 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 	svg.append("path")
 		.datum(data) 
 		.attr("class", "line_min") 
-		.attr("d", line_min(data))
+		.attr("d", line_smoothed(data))
 		.attr("style","fill:none; stroke: blue; stroke-width: 1;shape-rendering: crispEdges; color: blue")
 
-	svg.append("path")
-		.datum(data) 
-		.attr("class", "line_max") 
-		.attr("d", line_max(data))
-		.attr("style","fill:none; stroke: lightblue; stroke-width: 1;shape-rendering: crispEdges; color: blue")
 
 	svg.selectAll(".dot")
 		.data(data)
@@ -105,7 +98,7 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 		.attr("class", "dot") // Assign a class for styling
 		.attr("cx", function(d, i) { return x(d.year) })
 		.attr("cy", function(d) { return y(d.avg) })
-		.attr('style','fill: gray')
+		.attr("fill", function(d) { return colors(d);})
 		.attr("r", 4)
 		  .on("mouseover", function(a, b, c) {
 				console.log(x(a.year), y(a.avg) );
@@ -126,11 +119,9 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
 	svg.append("circle") // Uses the enter().append() method
 		.attr("class", "dot") // Assign a class for styling
-		.attr("cx", 964.7766666666665)
-		.attr("cy",  234.30723807193402)
-		.attr("r", '6').attr('style','fill: orange')
+		.attr("cx", x(2019)).attr("cy", y(412.742)).attr("r", 6).attr('style','fill: orange')
 		
-	svg.append("text").attr("x", 964.8 - 40).attr("y",  234 - 20).attr('id','perm_text')
+	svg.append("text").attr("x", x(2019)-40).attr("y", y(412.742)-30).attr('id','perm_text')
 		.text(function() {
 		  return 'Year: '+ 2019 + '; CO2 PPM: '+412.7;  // Value of the text
 			})
