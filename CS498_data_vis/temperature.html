@@ -6,24 +6,26 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 
 
-
 <body>
-<center> <h1> Global CO2 Levels Have Reached Unprecedented Heights</h1>
+<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages</h1>
 
 <svg style ='border:solid;'>
 </svg>
 <div padding = '10px'>
 <br>
-<a href='temperature.html'> <h2> Next: Click Here to See How Temperature Have Been Affected </h2></a>
-
+<a href='temperature.html'> <h2> Next: Click Here to See How Sea Ice and Sea Levels Have Been Affected </h2></a>
+</div>
+<div padding = '10px'>
+<br>
+<a href='co2_levels.html'> <h2> Prev: Click Here to See How Atmospheric CO2 Has Increased </h2></a>
+</div>
 </center>
 
 <script>
 
 var margin = 100;
 var width = window.innerHeight*1.5;
-var height = width*0.528 //golden ratio! (or was planning to...);
-
+var height = width*0.528 
 
 var svg = d3.select('svg')
 svg.attr("width", width + margin )
@@ -32,7 +34,7 @@ svg.attr("width", width + margin )
 
 
 var x = d3.scaleLinear()
-	.domain([1958,2019])
+	.domain([1958,2018])
     .range([margin, width - margin])
 
 svg.append("g")
@@ -124,9 +126,11 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
 	svg.append("circle") // Uses the enter().append() method
 		.attr("class", "dot") // Assign a class for styling
-		.attr("cx", x(2019)).attr("cy", y(412.742)).attr("r", 6).attr('style','fill: orange')
+		.attr("cx", 964.7766666666665)
+		.attr("cy",  234.30723807193402)
+		.attr("r", '6').attr('style','fill: orange')
 		
-	svg.append("text").attr("x", x(2019)-40).attr("y", y(412.742)-30).attr('id','perm_text')
+	svg.append("text").attr("x", 964.8 - 40).attr("y",  234 - 20).attr('id','perm_text')
 		.text(function() {
 		  return 'Year: '+ 2019 + '; CO2 PPM: '+412.7;  // Value of the text
 			})
