@@ -99,8 +99,8 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 
 	svg.selectAll(".dot")
 		.data(data)
-	  .enter().append("circle") // Uses the enter().append() method
-		.attr("class", "dot") // Assign a class for styling
+	  .enter().append("circle") 
+		.attr("class", "dot")
 		.attr("cx", function(d, i) { return x(d.year) })
 		.attr("cy", function(d) { return y(d.avg) })
 		.attr('style','fill: gray')
@@ -110,7 +110,7 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 				d3.select(this).attr("r", '6').attr('style','fill: orange');
 				 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.avg) + 40; }).attr('id','hovertext')
 				.text(function() {
-				  return 'Year: '+ a.year + '; CO2 PPM: '+a.avg;  // Value of the text
+				  return 'Year: '+ a.year + '; CO2 PPM: '+a.avg;  
 					});
 				console.log(this.id);
 			})
@@ -122,13 +122,13 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_
 				}
 			)
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
-	svg.append("circle") // Uses the enter().append() method
-		.attr("class", "dot") // Assign a class for styling
+	svg.append("circle")
+		.attr("class", "dot")
 		.attr("cx", x(2019)).attr("cy", y(412.742)).attr("r", 6).attr('style','fill: orange')
 		
 	svg.append("text").attr("x", x(2019)-40).attr("y", y(412.742)-30).attr('id','perm_text')
 		.text(function() {
-		  return 'Year: '+ 2019 + '; CO2 PPM: '+412.7;  // Value of the text
+		  return 'Year: '+ 2019 + '; CO2 PPM: '+412.7;  
 			})
 		});
 
