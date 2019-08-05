@@ -163,26 +163,26 @@ svg.append("text")
     .attr("transform", "rotate(-90)")
     .text("Sea Levels Deviation Compared to Year 2000 Measurements (Millimeters)")
 	
-var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+", "+ margin + ")")
+var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+", "+ 50 + ")")
 
 //annoations
 note_box.append("text")
-    .attr("dy", "20")
+    .attr("dy", "0")
     .attr("opacity", "1")
     .text("In recent years, our instruments have allowed us to measure sea levels and arctic sea ice more precisely...");
 note_box.append("text")
-    .attr("dy", "40")
+    .attr("dy", "20")
     .attr("opacity", "1")
     .text("...and see the extent of the drop in arctic ice coverage and rise in sea levels in just a couple of short decades.");
 note_box.append("text")
-    .attr("dy", "60")
+    .attr("dy", "40")
     .attr("opacity", "1")
-    .text("The sixty millimeter rise in sea levels in two decades is drastically impacting coastal areas in ways we can feel today.");
+    .text("The sixty millimeter rise in sea levels in two decades is drastically impacting coastal areas today.");
 
 note_box.append("text")
-    .attr("dy", "80")
+    .attr("dy", "60")
     .attr("opacity", "1")
-    .text("Hover to see the arctic ice extent and losses");
+    .text("Hover to see the arctic ice extent and losses; Color and Size are both based on Arctic Sea extent");
 	
 
 </script>
