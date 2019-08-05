@@ -1,5 +1,5 @@
 <!-- page 1 of visualization project for CS 498 -->
-<head><title> Page 1: Global CO2 Parts per Million </title> </header>
+<head><title> Page 2: Global Temperature Increases </title> </header>
 
 
 <!-- Load in the d3 library -->
@@ -7,17 +7,17 @@
 
 
 <body>
-<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages</h1>
+<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages (Deviation from 1950 - 1980 Avg)</h1>
 
 <svg style ='border:solid;'>
 </svg>
 <div padding = '10px'>
 <br>
-<a href='temperature.html'> <h2> Next: Click Here to See How Sea Ice and Sea Levels Have Been Affected </h2></a>
+<a href='ice_and_sea.html'> <h2> Next: Click Here to See How Sea Ice and Sea Levels Have Been Affected By Rising Temperatures</h2></a>
 </div>
 <div padding = '10px'>
 <br>
-<a href='co2_levels.html'> <h2> Prev: Click Here to See How Atmospheric CO2 Has Increased </h2></a>
+<a href='co2_levels.html'> <h2> Prev: Click Here to See How Atmospheric CO2 Has Increased, which Contributed to this Temperature Rise</h2></a>
 </div>
 </center>
 
@@ -54,7 +54,7 @@ var line_smoothed = d3.line()
 var colors = d3.scaleQuantize()
     .domain([-0.5,1.1])
     .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598", 
-    "#FFFFBF", "#FEE08B", "#FDAE61", "#F46D43", "#D53E4F", "#9E0142"]);	
+    "lightgreen", "#FEE08B", "#FDAE61", "#F46D43", "#D53E4F", "#9E0142"]);	
 	
 		
 	
@@ -84,12 +84,14 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_temp_dev
 		.attr("class", "line") 
 		.attr("d", line(data))
 		.attr("style","fill:none; stroke: grey; stroke-width: 3;shape-rendering: crispEdges; color: gray")
+		.attr( 'stroke',function(d) { return colors(d.avg);})
 		
 	svg.append("path")
 		.datum(data) 
 		.attr("class", "line_min") 
 		.attr("d", line_smoothed(data))
-		.attr("style","fill:none; stroke: blue; stroke-width: 1;shape-rendering: crispEdges; color: blue")
+		.attr("style","fill:none; stroke: orange; stroke-width: 1;shape-rendering: crispEdges; color: blue")
+		.attr( 'fill',function(d) { return colors(d.avg);})
 
 
 	svg.selectAll(".dot")
@@ -98,32 +100,32 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_temp_dev
 		.attr("class", "dot") // Assign a class for styling
 		.attr("cx", function(d, i) { return x(d.year) })
 		.attr("cy", function(d) { return y(d.avg) })
-		.attr("fill", function(d) { return colors(d);})
+		.attr("fill", function(d) { return colors(d.avg);})
 		.attr("r", 4)
 		  .on("mouseover", function(a, b, c) {
 				console.log(x(a.year), y(a.avg) );
-				d3.select(this).attr("r", '6').attr('style','fill: orange');
-				 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.avg) + 40; }).attr('id','hovertext')
+				d3.select(this).attr("r", 6);
+				 svg.append("text").attr('x', function() { return x(a.year) - 40; }).attr('y',function() { return y(a.avg) + 40; }).attr('id','hovertext').attr('font-weight','bold')
 				.text(function() {
-				  return 'Year: '+ a.year + '; CO2 PPM: '+a.avg;  // Value of the text
+				  return 'Year: '+ a.year + '; Temp Dev: '+a.avg;  // Value of the text
 					});
 				console.log(this.id);
 			})
 			
 		  .on("mouseout", function(a, b, c) {
 				console.log(x(a.year));
-				d3.select(this).attr("r", 4).attr('style','fill: gray');
+				d3.select(this).attr("r", 4).attr("fill", function(a) { return colors(a.avg);});
 				d3.select('#hovertext').remove();
 				}
 			)
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
 	svg.append("circle") // Uses the enter().append() method
 		.attr("class", "dot") // Assign a class for styling
-		.attr("cx", x(2019)).attr("cy", y(412.742)).attr("r", 6).attr('style','fill: orange')
+		.attr("cx", x(2018)).attr("cy", y(0.85)).attr("r", 6).attr('fill', colors(0.85))
 		
-	svg.append("text").attr("x", x(2019)-40).attr("y", y(412.742)-30).attr('id','perm_text')
+	svg.append("text").attr("x", x(2018)-20).attr("y", y(0.85)+30).attr('id','perm_text')
 		.text(function() {
-		  return 'Year: '+ 2019 + '; CO2 PPM: '+412.7;  // Value of the text
+		  return 'Year: '+ 2018 + '; Temp Dev.: '+0.85;  // Value of the text
 			})
 		});
 
@@ -149,26 +151,22 @@ var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+"
 note_box.append("text")
     .attr("dy", "20")
     .attr("opacity", "1")
-    .text("Since measurements by NASA began, we have seen a steady rise in CO2 concentration in the atmosphere;");
+    .text("Global warming has been in the news for decades, but more recent data is sombering.");
 note_box.append("text")
     .attr("dy", "40")
     .attr("opacity", "1")
-    .text("Current measurements are already the highest recorded and that record continues to be broken. ");
+    .text("18 of the 19 hottest years were in the 2000s, and the one that was not was 1998.");
 note_box.append("text")
     .attr("dy", "60")
     .attr("opacity", "1")
-    .text("Today, atmospheric COS sits at over 412 Parts per Million, a leading cause to a rise in temperatures... ");
+    .text("With temperatures higher than historical, the most sensitive areas, the polar ice caps, have increased their melting...");
 
 note_box.append("text")
     .attr("dy", "80")
     .attr("opacity", "1")
-    .text("Hover to see year and CO2 Concentration.");
+    .text("Hover to see year and temperature deviations from the 1950 - 80 averages");
 	
-note_box.append("text")
-    .attr("dy", "80")
-    .attr("opacity", "1")
-    .text("Hover to see year and CO2 Concentration.	Gray line is yearly average while light blue is yearly max and darkblue is yearly min");	
-		
+
 </script>
 
 
