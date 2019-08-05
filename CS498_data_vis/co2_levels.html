@@ -2,8 +2,9 @@
 <head><title> Page 1: Global CO2 Parts per Million </title> </header>
 
 
-<!-- Load in the d3 library -->
+<!-- Load in the d3 library -->
 <script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-array.v1.min.js"></script>
 
 
 <body>
@@ -16,8 +17,8 @@
 <script>
 
 var margin = 50;
-var width = window.innerHeight;
-var height = window.innerHeight *0.628 //golden ratio!;
+var width = window.innerHeight*1.3;
+var height = width*0.628 //golden ratio!;
 
 
 var svg = d3.select('svg')
@@ -25,20 +26,8 @@ svg.attr("width", width + margin )
     .attr("height", height + margin);
 
 
-//data!
-var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_data_yearly.csv").then(function(data) {
-	data.forEach(function(d) {
-        d.year = +d.Year;
-        d.avg = +d.avg;
-		d.min = +d.min;
-		d.max = +d.max;
-		});
-	console.log(data);
-	});
-
 
 var x = d3.scaleLinear()
-    .domain(d3.extent(data, function(d) { return d.year; }))
 	.domain([1958,2018])
     .range([margin, width - margin])
 
@@ -48,30 +37,90 @@ svg.append("g")
 	.call(d3.axisBottom(x).tickFormat(d3.format("d")));
 	
 
+var line = d3.line()
+    .x(function(d,i) { return x(d.year); })
+    .y(function(d,i) { return y(d.avg); }) // y is avg
+	
+var line_min = d3.line()
+    .x(function(d,i) { return x(d.year); })
+    .y(function(d,i) { return y(d.min); }) // y is min
 
+var line_max = d3.line()
+    .x(function(d,i) { return x(d.year); })
+    .y(function(d,i) { return y(d.max); }) // y is max
+	
+	
+	
+		
+	
 var y = d3.scaleLinear()
-    .domain([300, 450]).nice()
-    .range([height - margin, margin])
+    .domain([300,450]).nice()
+    .range([height , margin])
 
 svg.append("g")
 	.attr("class", "y axis")
-	.attr("transform", "translate(" + margin+", "+margin + ")")
+	.attr("transform", "translate(" + margin+", "+0 + ")")
 	.call(d3.axisLeft(y));
+
+var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_co2_ppm_data_yearly.csv").then(function(data) {
+	//data!
+	data.forEach(function(d) {
+        d.year = +d.Year;
+        d.avg = +d.avg;		
+		d.min = +d.min;
+		d.max = +d.max;
+		});
+
+	console.log(data);
 	
 
-var line = d3.line()
-    .x(function(d) { return x(d.year); }) // set the x values for the line generator
-    .y(function(d) { return y(d.avg); }) // set the y values for the line generator 
-    //.curve(d3.curveMonotoneX) // apply smoothing to the line
+
+svg.append("path")
+    .datum(data) 
+    .attr("class", "line") 
+    .attr("d", line(data))
+	.attr("style","fill:none; stroke: grey; stroke-width: 3;shape-rendering: crispEdges; color: gray")
 	
 svg.append("path")
-    .datum(data) // 10. Binds data to the line 
-    .attr("class", "line") // Assign a class for styling 
-    .attr("d", line)
-	.attr("transform", "translate(" +margin+", "+(height) + ")"); // 11. Calls the line generator 
+    .datum(data) 
+    .attr("class", "line_min") 
+    .attr("d", line_min(data))
+	.attr("style","fill:none; stroke: blue; stroke-width: 1;shape-rendering: crispEdges; color: blue")
+
+svg.append("path")
+    .datum(data) 
+    .attr("class", "line_max") 
+    .attr("d", line_max(data))
+	.attr("style","fill:none; stroke: blue; stroke-width: 1;shape-rendering: crispEdges; color: blue")
+
+svg.selectAll(".dot")
+    .data(data)
+  .enter().append("circle") // Uses the enter().append() method
+    .attr("class", "dot") // Assign a class for styling
+    .attr("cx", function(d, i) { return x(d.year) })
+    .attr("cy", function(d) { return y(d.avg) })
+	.attr('style','fill: gray')
+    .attr("r", 3)
+      .on("mouseover", function(a, b, c) {
+			console.log(a);
+			d3.select(this).attr("r", '6').attr('style','fill: orange');
+			 svg.append("text").attr('x', function() { return x(a.year) - 30; }).attr('y',function() { return y(a.avg) + 25; }).attr('id','hovertext')
+            .text(function() {
+              return 'Year: '+ a.year + '; CO2 PPM: '+a.avg;  // Value of the text
+				});
+			console.log(this.id);
+		})
+		
+      .on("mouseout", function(a, b, c) {
+			console.log(x(a.year));
+			d3.select(this).attr("r", '3').attr('style','fill: gray');
+			d3.select('#hovertext').remove();
+			}
+		)
+	//.attr("transform", "translate(" +margin+", "+(height) + ")");
 
 
-	
+		});
 </script>
 
 
