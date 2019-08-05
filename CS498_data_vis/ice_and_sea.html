@@ -69,13 +69,13 @@ svg.append("g")
 	.attr("transform", "translate(" + margin+", "+0 + ")")
 	.call(d3.axisLeft(y));
 
-var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_ice_sealevel_combo_data_yearly.csv").then(function(data) {
+var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_ice_sealevel_combo_data.csv").then(function(data) {
 	//data!
 	data.forEach(function(d) {
         d.year = +d.Year;
         d.avg = +d.min_arctic_ice_ext;		
 		d.sealevel = +d.sealevel_deviation_from_2000;
-		d.temp = +d.temp_deviation_century_mean;
+		d.temp = +d.temp_deviation_century_mean
 		d.ice_perc = +d.ice_percent_lost;
 		});
 
@@ -125,14 +125,14 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/temp_arctic_i
 				}
 			)
 		//.attr("transform", "translate(" +margin+", "+(height) + ")");
-	svg.append("circle") 
-		.attr("class", "dot") 
-		.attr("cx", x(2018)).attr("cy", y(0.85)).attr("r", 6).attr('fill', colors(0.85))
+	// svg.append("circle") 
+		// .attr("class", "dot") 
+		// .attr("cx", x(2018)).attr("cy", y(0.85)).attr("r", 6).attr('fill', colors(0.85))
 		
-	svg.append("text").attr("x", x(2018)-20).attr("y", y(0.85)+30).attr('id','perm_text')
-		.text(function() {
-		  return 'Year: '+ 2018 + '; Temp Dev.: '+0.85;  
-			})
+	// svg.append("text").attr("x", x(2018)-20).attr("y", y(0.85)+30).attr('id','perm_text')
+		// .text(function() {
+		  // return 'Year: '+ 2018 + '; Temp Dev.: '+0.85;  
+			// })
 			
 	// svg.append("circle") 
 		// .attr("class", "dot") 
@@ -182,7 +182,7 @@ note_box.append("text")
 note_box.append("text")
     .attr("dy", "80")
     .attr("opacity", "1")
-    .text("Hover to see the arctic ice extent losses");
+    .text("Hover to see the arctic ice extent and losses");
 	
 
 </script>
