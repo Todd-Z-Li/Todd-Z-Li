@@ -7,7 +7,8 @@
 
 
 <body>
-<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages (Deviation from 1950 - 1980 Avg)</h1>
+<center> <h1> Global Yearly Avg Temperature Show Significant Deviation From Historical Averages 
+<br>(Deviation from 1950 - 1980 Avg, in Celsius)</h1>
 
 <svg style ='border:solid;'>
 </svg>
@@ -129,6 +130,7 @@ var data = d3.csv("https://todd-z-li.github.io/todd/CS498_data_vis/nasa_temp_dev
 			})
 		});
 
+// x axis
 svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
@@ -136,6 +138,7 @@ svg.append("text")
     .attr("y", height+50)
     .text("Year");
 	
+//y axis
 svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
@@ -143,11 +146,11 @@ svg.append("text")
 	.attr("x", -height/2+margin)
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
-    .text("CO2 Concentration (Parts per Million)")
+    .text("Degrees Deviation from 1950 - 1980 Average (Celsius)")
 	
 var note_box = svg.append('g').attr("transform", "translate(" +(margin+margin)+", "+ margin + ")")
 
-
+//annoations
 note_box.append("text")
     .attr("dy", "20")
     .attr("opacity", "1")
